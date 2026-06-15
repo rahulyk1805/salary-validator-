@@ -1,6 +1,5 @@
 import os
 import tempfile
-
 from openpyxl import load_workbook
 from openpyxl import Workbook
 
@@ -28,15 +27,19 @@ def to_float(value):
 
 def is_bold_row(row):
 
+    bold_count = 0
+
     for cell in row:
 
         try:
+
             if cell.font and cell.font.bold:
-                return True
+                bold_count += 1
+
         except:
             pass
 
-    return False
+    return bold_count >= 2
 
 
 def get_bold_rows(sheet):
@@ -124,20 +127,20 @@ def validate_sheet(sheet):
 
     return mismatches
 
-
 # =====================================================
 # MAIN PROCESS
 # =====================================================
 
 def process_salary_file(file_path):
 
-    extension = os.path.splitext(file_path)[1].lower()
+    extension = os.path.splitext(
+        file_path
+    )[1].lower()
 
     if extension != ".xlsx":
 
         raise Exception(
-            "Current version supports .xlsx files only. "
-            "Please save the Excel file as .xlsx and upload again."
+            "Only .xlsx files are supported."
         )
 
     wb = load_workbook(file_path)
@@ -149,13 +152,16 @@ def process_salary_file(file_path):
         if sheet.title == "Validation_Report":
             continue
 
-        sheet_mismatches = validate_sheet(sheet)
+        sheet_mismatches = validate_sheet(
+            sheet
+        )
 
         all_mismatches.extend(
             sheet_mismatches
         )
 
     if "Validation_Report" in wb.sheetnames:
+
         del wb["Validation_Report"]
 
     report_sheet = wb.create_sheet(
@@ -173,13 +179,20 @@ def process_salary_file(file_path):
     ])
 
     for row in all_mismatches:
-        report_sheet.append(row)
+
+        report_sheet.append(
+            row
+        )
 
     output_dir = tempfile.mkdtemp()
 
+    original_name = os.path.basename(
+        file_path
+    )
+
     output_file = os.path.join(
         output_dir,
-        "Validated_" + os.path.basename(file_path)
+        "Validated_" + original_name
     )
 
     wb.save(output_file)
