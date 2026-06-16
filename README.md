@@ -307,6 +307,15 @@ pip install -r requirements.txt
 
 streamlit run app.py
 ```
+## Live Demo
+
+The Salary Validation Tool is a Streamlit-based application designed to automate the validation of salary Excel files. The tool identifies salary blocks using predefined formatting rules, validates column-wise totals against the corresponding block totals, and generates a detailed validation report highlighting any mismatches.
+
+
+### Live Application
+
+🔗 https://salary-validation-tool.streamlit.app/
+
 
 ---
 
